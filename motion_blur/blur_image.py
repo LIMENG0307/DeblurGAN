@@ -4,9 +4,20 @@ import cv2
 import os
 from scipy import signal
 from scipy import misc
-from motion_blur.generate_PSF import PSF
-from motion_blur.generate_trajectory import Trajectory
+from PIL import Image
 
+from skimage.io import imread,imsave
+
+try:
+    from motion_blur.generate_PSF import PSF
+    from motion_blur.generate_trajectory import Trajectory
+except:
+    from generate_PSF import PSF
+    from generate_trajectory import Trajectory
+
+
+def rect_from_dlib(d):
+    return [d.left(), d.top(), d.width(), d.height()]
 
 class BlurImage(object):
 
@@ -20,15 +31,26 @@ class BlurImage(object):
         """
         if os.path.isfile(image_path):
             self.image_path = image_path
-            self.original = misc.imread(self.image_path)
+            self.original = imread(self.image_path)
+
             self.shape = self.original.shape
             if len(self.shape) < 3:
                 raise Exception('We support only RGB images yet.')
             elif self.shape[0] != self.shape[1]:
-                raise Exception('We support only square images yet.')
+                self.original = self.make_square(self.original)
+                self.shape = self.original.shape
+
+                #raise Exception('We support only square images yet.')
         else:
             raise Exception('Not correct path to image.')
-        self.path_to_save = path__to_save
+        
+        #Save image as square 
+        self.path_to_folder = os.path.join(path__to_save,'original')
+        self.path_to_save_original =os.path.join(self.path_to_folder,self.image_path.split('/')[-1])
+        print(self.path_to_save_original)
+        imsave(self.path_to_save_original,self.original)
+
+        self.path_to_save = os.path.join(path__to_save,'blurred')
         if PSFs is None:
             if self.path_to_save is None:
                 self.PSFs = PSF(canvas=self.shape[0]).fit()
@@ -41,6 +63,15 @@ class BlurImage(object):
         self.part = part
         self.result = []
 
+    def make_square(self,image):
+
+        cut = max(image.shape)
+        
+        return image[:cut,:cut]
+
+       
+        
+    
     def blur_image(self, save=False, show=False):
         if self.part is None:
             psf = self.PSFs
@@ -108,8 +139,9 @@ class BlurImage(object):
 
 
 if __name__ == '__main__':
-    folder = '/Users/mykolam/PycharmProjects/University/DeblurGAN2/results_sharp'
-    folder_to_save = '/Users/mykolam/PycharmProjects/University/DeblurGAN2/blured'
+    folder = '/media/ssd_storage/irodri15/Projects/AIF/clearview/Deblur/data/facethumbs'
+    folder_to_save = '/media/ssd_storage/irodri15/Projects/AIF/clearview/Deblur/data/facethumbs_processed'
+    os.makedirs(folder_to_save,exist_ok=True)
     params = [0.01, 0.009, 0.008, 0.007, 0.005, 0.003]
     for path in os.listdir(folder):
         print(path)

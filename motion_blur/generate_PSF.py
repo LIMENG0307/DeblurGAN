@@ -1,8 +1,10 @@
 import numpy as np
 from math import ceil
 import matplotlib.pyplot as plt
-from motion_blur.generate_trajectory import Trajectory
-
+try:
+    from motion_blur.generate_trajectory import Trajectory
+except:
+    from generate_trajectory import Trajectory
 
 class PSF(object):
     def __init__(self, canvas=None, trajectory=None, fraction=None, path_to_save=None):
