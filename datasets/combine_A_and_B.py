@@ -33,12 +33,15 @@ for sp in splits:
     for n in range(num_imgs):
         name_A = img_list[n]
         path_A = os.path.join(img_fold_A, name_A)
+        print(path_A)
         if args.use_AB:
             name_B = name_A.replace('_A.', '_B.')
         else:
             name_B = name_A
         path_B = os.path.join(img_fold_B, name_B)
+        print(path_B)
         if os.path.isfile(path_A) and os.path.isfile(path_B):
+            print('entering')
             name_AB = name_A
             if args.use_AB:
                 name_AB = name_AB.replace('_A.', '.') # remove _A

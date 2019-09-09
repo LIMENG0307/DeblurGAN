@@ -29,7 +29,7 @@ for f in [sharp_out,blurred_out]:
     for s in ['train','test','val']:
         map_folder[f+'_'+s]=os.path.join(f,s)
         os.makedirs(map_folder[f+'_'+s],exist_ok=True)
-
+print(map_folder)
 #blurred_in = glob.glob(os.path.join(args.fold_A,'*.*g'))
 imfiles= glob.glob(os.path.join(args.fold_B,'*.*g'))
 
@@ -46,9 +46,18 @@ for x in X_train:
     if not os.path.exists(blur):
         print('blur image does not exist n/',blur)
         continue
-    os.symlink(x,dst)
+    print('in',x)
+    img=cv2.imread(x)
+    
+    #print(img.shape)
+    cv2.imwrite(dst,img)
+    print('out',dst)
+    #os.symlink(x,dst)
+    
     dst_blur = os.path.join(map_folder[blurred_out+'_'+'train'],name)
-    os.symlink(blur,dst_blur)
+    img_blur = cv2.imread(blur)
+    cv2.imwrite(dst_blur,img_blur)
+    #os.symlink(blur,dst_blur)
     
 for x in X_test:
     name = x.split('/')[-1]
@@ -58,9 +67,14 @@ for x in X_test:
     if not os.path.exists(blur):
         print('blur image does not exist n/',blur)
         continue
-    os.symlink(x,dst)
+    img=cv2.imread(x)
+    cv2.imwrite(dst,img)
+    #os.symlink(x,dst)
+    
     dst_blur = os.path.join(map_folder[blurred_out+'_'+'test'],name)
-    os.symlink(blur,dst_blur)
+    img_blur = cv2.imread(blur)
+    cv2.imwrite(dst_blur,img_blur)
+    #os.symlink(blur,dst_blur)
 
         
 for x in X_val:
@@ -71,6 +85,11 @@ for x in X_val:
     if not os.path.exists(blur):
         print('blur image does not exist n/',blur)
         continue
-    os.symlink(x,dst)
+    img=cv2.imread(x)
+    cv2.imwrite(dst,img)
+    #os.symlink(x,dst)
+    
     dst_blur = os.path.join(map_folder[blurred_out+'_'+'val'],name)
-    os.symlink(blur,dst_blur)
+    img_blur = cv2.imread(blur)
+    cv2.imwrite(dst_blur,img_blur)
+    #os.symlink(blur,dst_blur)
